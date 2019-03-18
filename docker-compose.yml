@@ -1,0 +1,40 @@
+version: '3.3'
+
+# NOTERA ATT DETTA BARA ÄR ETT EXEMPEL.
+# KAFKA + ZOOKEEPER KRÄVER EN LOKAL "INSTALLATION" AV
+# KAFKA OCH ZOOKEEPER FÖR ATT KÖRA.
+
+services:
+  min-forsta-service-zookeeper:
+    # Lägg till din volym här
+    volumes:
+      - .:/hej
+    # Din docker image här.
+    image: confluentinc/cp-zookeeper:5.1.0
+    ports:
+      #port in:port ut
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      #Om man har flera instancer av zookeeper
+      zk_id: "1"
+    #Vilket dockernätverk vi ska använda.
+    network_mode: "host"
+
+  min-andra-service-kafka:
+    # Lägg till din volym här
+    volumes:
+      - .:/Hejsan
+    image: confluentinc/cp-zookeeper:5.1.0
+    # Kommer inte bygga ut förrän den angivna servicen är uppe.
+    depends_on:
+      - min-forsta-service-zookeeper
+    environment:
+      ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'min-forsta-service-zookeeper:2181'
+    network_mode: "host"
+
